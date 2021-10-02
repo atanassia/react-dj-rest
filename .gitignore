@@ -70,4 +70,5 @@ db.sqlite3
 #Frontend
 
 frontend/node_modules/*
-frontend/react_components.txt
+react_components.txt
+teoriya.docx

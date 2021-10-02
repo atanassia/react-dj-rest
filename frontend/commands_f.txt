@@ -1,0 +1,32 @@
+npm init -y   - создает node package.json и всякое другое что нужно для фронта
+
+
+Теперь нужно из npm кучу всего скачать (ракт, бабл, вебпак и тд)
+
+Благодаря это команде мы скачаем вебпак, он весь js переместит?? в один файл
+npm i webpack webpack-cli --save-dev
+
+Теперь скачиваем бабл, это штучка для работы с браузерами (для удобства работы!!)
+npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save
+
+А теперь скачиваем реакт
+npm i react react-dom --save-dev
+
+Следующее что скачиваем - material ui, pre-build component чтоб со стилями не мотаться
+короче на бутстрап похож
+npm install @material-ui/core
+
+еще бабл
+для использования асинхронного js
+npm install @babel/plugin-proposal-class-properties
+
+
+Чтоб на несколько страниц реакта идти ?? что?? 
+npm install react-router-dom
+
+
+Просто иконки
+npm install @material-ui/icons
+
+
+теперь нажо в package.json прописать все скачанные компоненты (по факту они сами обновились)
