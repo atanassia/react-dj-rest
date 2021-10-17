@@ -13,13 +13,19 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 export default class CreateRoomPage extends Component {
 
-    defaultVotes = 2;
+    static defaultProps = {
+        votesToSkip: 2,
+        guestCanPause: true,
+        update: false,
+        roomCode: null,
+        updateCallback: () => {},
+    };
 
     constructor(props){
         super(props);
         this.state = {
-            guestCanPause: true,
-            votesToSkip: this.defaultVotes,
+            guestCanPause: this.props.guestCanPause,
+            votesToSkip: this.props.votesToSkip,
         };
 
         this.handleRoomButtonPressed = this.handleRoomButtonPressed.bind(this);
@@ -54,13 +60,71 @@ export default class CreateRoomPage extends Component {
         .then((data) => this.props.history.push('/room/' + data.code));
     }
 
+    handleUpdateButtonPressed(){
+        const requestOptions = {
+            method: "PATCH",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                votes_to_skip: this.state.votesToSkip,
+                guest_can_pause: this.state.guestCanPause,
+                code: this.props.roomCode
+            }),
+        };
+
+        fetch('/api/update-room', requestOptions)
+        .then((response) => {
+            if (response.ok){
+                this.setState({
+                    successMsg: "Комната успешно обновлена",
+                });
+            }else{
+                this.setState({
+                    errorMsg: "Ошибка при обновлении комнаты",
+                });
+            }
+        });
+
+    }
+
+    renderCreateButtons(){
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align = "center">
+                    <Button color = "primary" variant = "contained" onClick = {this.handleRoomButtonPressed}>
+                        Создать комнату
+                    </Button>
+                </Grid>
+
+                <Grid item xs={12} align = "center">
+                    <Button color = "secondary" variant = "contained" to = "/" component = {Link}> 
+                        Обратно
+                    </Button>
+                </Grid>
+            </Grid>
+        );
+    }
+
+    renderUpdateButtons(){
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align = "center">
+                    <Button color = "primary" variant = "contained" onClick = {this.handleRoomButtonPressed}>
+                        Изменение комнаты
+                    </Button>
+                </Grid>
+            </Grid>
+        );
+    }
+
     render(){
+
+        const title = this.props.update ? "Изменение комнаты" : "Создание комнаты";
         return(
             <Grid container spacing={1}>
 
                 <Grid item xs={12} align = "center">
                     <Typography component = 'h4' variant = 'h4'>
-                        Создание комнаты
+                        {title}
                     </Typography>
                 </Grid>
 
@@ -100,7 +164,7 @@ export default class CreateRoomPage extends Component {
                             required = {true} 
                             type = "number" 
                             onChange = {this.handleVotesChanged}
-                            defaultValue = {this.defaultVotes}
+                            defaultValue = {this.state.votesToSkip}
                             inputProps = {{
                                 min: 1,
                                 style: {textAlign: "center"},
@@ -114,18 +178,9 @@ export default class CreateRoomPage extends Component {
                         </FormHelperText>
                     </FormControl>
                 </Grid>
-
-                <Grid item xs={12} align = "center">
-                    <Button color = "primary" variant = "contained" onClick = {this.handleRoomButtonPressed}>
-                        Создать комнату
-                    </Button>
-                </Grid>
-
-                <Grid item xs={12} align = "center">
-                    <Button color = "secondary" variant = "contained" to = "/" component = {Link}> 
-                        Обратно
-                    </Button>
-                </Grid>
+                {this.props.update 
+                ? this.renderUpdateButtons()
+                : this.renderCreateButtons()}
             </Grid>
         );
     }

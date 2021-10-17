@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { Grid, Button, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import CreateRoomPage from './CreateRoomPage';
 
 export default class Room extends Component{
     constructor(props){
@@ -10,11 +10,15 @@ export default class Room extends Component{
             votesToSkip: 2,
             guestCanPause: false,
             isHost: false,
+            showSettings: false,
         };
 
         this.roomCode = this.props.match.params.roomCode;
         this.getRoomDeatils();
         this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
+        this.updateShowSettings = this.updateShowSettings.bind(this);
+        this.renderSettingsButton = this.renderSettingsButton.bind(this);
+        this.renderSettings = this.renderSettings.bind(this);
     }
 
     getRoomDeatils(){
@@ -47,9 +51,55 @@ export default class Room extends Component{
         });
     }
 
-    render(){
-        return(
+    updateShowSettings(value){
+        this.setState({
+            showSettings: value,
+        });
+    }
 
+    renderSettings() {
+        return (
+          <Grid container spacing={1}>
+            <Grid item xs={12} align="center">
+              <CreateRoomPage
+                update={true}
+                votesToSkip={this.state.votesToSkip}
+                guestCanPause={this.state.guestCanPause}
+                roomCode={this.roomCode}
+                updateCallback={() => {}}
+              />
+            </Grid>
+            <Grid item xs={12} align="center">
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => this.updateShowSettings(false)}
+              >
+                Закрыть
+              </Button>
+            </Grid>
+          </Grid>
+        );
+    }
+
+    renderSettingsButton(){
+        return (
+            <Grid item xs={12} align = "center">
+                <Button 
+                    variant = "contained" 
+                    color = "primary"
+                    onClick = {() => this.updateShowSettings(true)}>
+                        Настройки
+                </Button>
+            </Grid>
+        );
+    }
+
+    render(){
+        if (this.state.showSettings) {
+            return this.renderSettings();
+        }
+        return(
             <Grid conatiner spacing = {1}>
                 <Grid item xs={12} align = "center">
                     <Typography variant = "h4" component = "h4">
@@ -71,7 +121,8 @@ export default class Room extends Component{
                         Хост: {this.state.isHost.toString()}
                     </Typography>
                 </Grid>
-                <Grid item xs={12} align = "center">
+                {this.state.isHost ? this.renderSettingsButton() : null}
+                <Grid item xs={12} align = "center" className="mt-1">
                     <Button color = "secondary" variant = "contained" onClick = {this.leaveButtonPressed}>
                         Покинуть комнату
                     </Button>
